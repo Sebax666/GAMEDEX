@@ -1,0 +1,323 @@
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+    background: #0f172a;
+}
+
+/* HEADER */
+.header {
+    position: relative;
+    height: 300px;
+    background-size: cover;       
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Overlay oscuro */
+.header::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.header h2 {
+    font-size: 40px;
+    color: #38bdf8;
+}
+
+/* BOTÓN VOLVER */
+.btn-back-float {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.6);
+    padding: 10px;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+    z-index: 3;
+}
+
+.btn-back-float:hover {
+    background: #38bdf8;
+}
+
+/* CONTENIDO PRINCIPAL CON FLEX */
+.container {
+    display: flex;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+/* COLUMNA DE PUBLICACIONES */
+.posts-column {
+    flex: 3;
+}
+
+.post {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 10px rgba(0,255,255,0.1);
+}
+
+.post small {
+    color: #94a3b8;
+}
+
+.post img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+    max-height: 400px;
+    object-fit: cover;
+}
+
+.likes {
+    margin-top: 10px;
+}
+
+.likes button {
+    background: none;
+    border: none;
+    color: #38bdf8;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.delete-btn {
+    float: right;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 16px;
+    background: none;
+    border: none;
+}
+
+/* BARRA DERECHA */
+.sidebar {
+    flex: 1;
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 15px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar h3 {
+    margin-bottom: 15px;
+}
+
+/* Formulario barra lateral */
+#formPublicacion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#formPublicacion textarea {
+    width: 100%;
+    height: 80px;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    background: #0f172a;
+    color: white;
+    margin-bottom: 10px;
+}
+
+#formPublicacion input[type="file"] {
+    display: none;
+}
+
+#formPublicacion label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background: #38bdf8;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#formPublicacion button {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(45deg, #22c55e, #4ade80);
+    cursor: pointer;
+    width: 100%;
+}
+</style>
+
+<!-- HEADER -->
+<div class="header" 
+    style="background-image: url('{% if comunidad.imagen %}{{ comunidad.imagen.url }}{% else %}https://images.unsplash.com/photo-1542751371-adc38448a05e{% endif %}')">
+
+    <a href="{% url 'comunidades' %}" class="btn-back-float">⬅</a>
+
+    <div class="header-content">
+        <h2>🎮 {{ comunidad.nombre }}</h2>
+        <p>{{ comunidad.descripcion }}</p>
+        <small style="color:#94a3b8; font-size:14px;">
+            👤 By {{ comunidad.creador.username }}
+        </small>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- COLUMNA DE PUBLICACIONES -->
+    <div class="posts-column">
+        {% for post in publicaciones %}
+            <div class="post publicacion" id="pub-{{ post.id }}">
+                <!-- Nombre del autor primero -->
+                <small>👤 {{ post.autor }}</small>
+                
+                {% if request.user == comunidad.creador or request.user.perfil.rol == "Administrador" or request.user == post.autor %}
+                    <button class="delete-btn" onclick="eliminarPublicacion({{ post.id }})">🗑</button>
+                {% endif %}
+                
+                <p>{{ post.contenido }}</p>
+                {% if post.imagen %}
+                    <img src="{{ post.imagen.url }}">
+                {% endif %}
+
+                <div class="likes">
+                    <button onclick="darLike({{ post.id }})">
+                        👍 <span id="likes-{{ post.id }}">{{ post.total_likes }}</span>
+                    </button>
+                </div>
+
+                <div class="comentarios">
+                    {% for comentario in post.comentarios.all %}
+                        <p><b>{{ comentario.autor }}</b>: {{ comentario.contenido }}</p>
+                    {% endfor %}
+                </div>
+
+                <form method="POST" action="{% url 'comentar' post.id %}">
+                    {% csrf_token %}
+                    <input type="text" name="contenido" placeholder="Comentar..." required>
+                    <button type="submit">💬</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- BARRA DERECHA -->
+    <div class="sidebar">
+        <h3>✍️ Nueva publicación</h3>
+        <form id="formPublicacion" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea name="contenido" placeholder="Escribe algo..."></textarea>
+            <label for="imagen">📷</label>
+            <input type="file" name="imagen" id="imagen">
+            <button type="submit">🚀 Publicar</button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+function darLike(postId) {
+    fetch(`/like/${postId}/`)
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById(`likes-${postId}`).innerText = data.total_likes;
+    });
+}
+
+// Eliminar publicación
+function eliminarPublicacion(postId) {
+    if (confirm("¿Deseas eliminar esta publicación?")) {
+        fetch(`/eliminar_publicacion/${postId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const div = document.getElementById('pub-' + postId);
+                if(div) div.remove();
+            } else {
+                alert(data.error);
+            }
+        });
+    }
+}
+
+// AJAX para crear publicación con autor al inicio
+const form = document.getElementById('formPublicacion');
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    fetch("{% url 'crear_publicacion_ajax' comunidad.id %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            const div = document.createElement('div');
+            div.className = 'post publicacion';
+            div.id = 'pub-' + data.id;
+            
+            let deleteBtn = '';
+            if (data.permisos) {  // permisos enviados desde la vista
+                deleteBtn = `<button class="delete-btn" onclick="eliminarPublicacion(${data.id})">🗑</button>`;
+            }
+
+            div.innerHTML = `<small>👤 ${data.autor}</small>` +
+                            deleteBtn +
+                            `<p>${data.contenido}</p>` +
+                            (data.imagen_url ? `<img src="${data.imagen_url}">` : '') +
+                            `<div class="likes">
+                                <button onclick="darLike(${data.id})">
+                                    👍 <span id="likes-${data.id}">0</span>
+                                </button>
+                             </div>` +
+                             `<div class="comentarios"></div>` +
+                             `<form method="POST" action="/comentar/${data.id}/">
+                                <input type="text" name="contenido" placeholder="Comentar..." required>
+                                <button type="submit">💬</button>
+                             </form>`;
+            
+            document.querySelector('.posts-column').prepend(div);
+            form.reset();
+        }
+    })
+    .catch(error => console.error(error));
+});
+</script>

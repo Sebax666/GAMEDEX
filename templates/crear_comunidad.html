@@ -1,0 +1,113 @@
+<style>
+body {
+    background: #0f172a;
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.card {
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.2);
+}
+
+h2 {
+    text-align: center;
+    color: #38bdf8;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: #0f172a;
+    color: white;
+}
+
+textarea {
+    height: 100px;
+    resize: none;
+}
+
+.buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+.btn-crear {
+    background: linear-gradient(45deg, #22c55e, #4ade80);
+    color: black;
+}
+
+.btn-cancelar {
+    background: linear-gradient(45deg, #ef4444, #f87171);
+    color: white;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+</style>
+
+<div class="container">
+    <div class="card">
+
+        <h2>🎮 Crear Comunidad</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <label>Nombre:</label>
+            <input type="text" name="nombre" required>
+
+            <label>Imagen de la comunidad:</label>
+            <input type="file" name="imagen" required>
+
+
+            <label>Descripción:</label>
+            <textarea name="descripcion" required></textarea>
+
+            <div class="buttons">
+                <button type="submit" class="btn btn-crear">
+                    🚀 Crear
+                </button>
+
+                <a href="{% url 'comunidades' %}" class="btn btn-cancelar">
+                    ❌ Cancelar
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>

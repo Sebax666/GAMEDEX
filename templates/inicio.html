@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAMEDEX</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: #020617;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* CANVAS */
+#particles {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 50px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #00c6ff33;
+}
+
+.navbar h1 {
+    color: #00c6ff;
+    text-shadow: 0 0 15px #00c6ff;
+}
+
+.btn {
+    padding: 10px 25px;
+    border-radius: 30px;
+    border: 1px solid #00c6ff;
+    background: transparent;
+    color: #00c6ff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #00c6ff;
+    color: black;
+    box-shadow: 0 0 20px #00c6ff;
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 120px 20px 80px;
+}
+
+.hero h2 {
+    font-size: 60px;
+    background: linear-gradient(90deg,#00c6ff,#ff00ff,#00ff88);
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 30px #00c6ff55;
+}
+
+.hero p {
+    color: #aaa;
+    font-size: 18px;
+}
+
+/* FEATURES */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 30px;
+    padding: 40px;
+}
+
+.feature-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(0,198,255,0.2);
+    transition: 0.3s;
+    position: relative;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 0 30px #00c6ff44;
+}
+
+.feature-card h3 {
+    color: #00c6ff;
+}
+
+/* CURSOR */
+.cursor {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #00c6ff;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 15px #00c6ff;
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+    <h1>GAMEDEX</h1>
+    <div>
+        <a href="{% url 'login' %}"><button class="btn">Login</button></a>
+        <a href="{% url 'registro_publico' %}"><button class="btn">Registro</button></a>
+    </div>
+</div>
+
+<!-- HERO -->
+
+<div class="hero">
+    <h2>LEVEL UP YOUR GAME 🎮</h2>
+    <p>Compra, vende y domina el mundo gamer</p>
+</div>
+
+<!-- FEATURES -->
+
+<div class="features">
+    <div class="feature-card">
+        <h3>🛒 Compra fácil</h3>
+        <p>Encuentra los mejores productos gamer al instante</p>
+    </div>
+
+<div class="feature-card">
+    <h3>💸 Vende rápido</h3>
+    <p>Publica y vende sin complicaciones</p>
+</div>
+
+<div class="feature-card">
+    <h3>🔥 Comunidad</h3>
+    <p>Conecta con otros gamers como tú</p>
+</div>
+
+</div>
+
+<div class="footer">
+    © 2026 GAMEDEX - All rights reserved
+</div>
+
+<script>
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let mouse = { x: null, y: null };
+window.addEventListener("mousemove", e => {
+    mouse.x = e.x;
+    mouse.y = e.y;
+});
+
+/* CURSOR */
+const cursor = document.getElementById("cursor");
+window.addEventListener("mousemove", e => {
+    cursor.style.left = e.clientX + "px";
+    cursor.style.top = e.clientY + "px";
+});
+
+/* PARTICULAS */
+class Particle {
+    constructor() {
+        this.x = Math.random()*canvas.width;
+        this.y = Math.random()*canvas.height;
+        this.size = Math.random()*2+1;
+        this.dx = (Math.random()-0.5);
+        this.dy = (Math.random()-0.5);
+    }
+
+    update() {
+        this.x += this.dx;
+        this.y += this.dy;
+
+        if(this.x > canvas.width) this.x=0;
+        if(this.x < 0) this.x=canvas.width;
+        if(this.y > canvas.height) this.y=0;
+        if(this.y < 0) this.y=canvas.height;
+
+        /* interacción con mouse */
+        let distX = this.x - mouse.x;
+        let distY = this.y - mouse.y;
+        let distance = Math.sqrt(distX*distX + distY*distY);
+
+        if(distance < 100){
+            this.x += distX/10;
+            this.y += distY/10;
+        }
+    }
+
+    draw() {
+        ctx.fillStyle = "#00c6ff";
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+let particles = [];
+function init(){
+    particles = [];
+    for(let i=0;i<140;i++){
+        particles.push(new Particle());
+    }
+}
+
+function connect(){
+    for(let a=0;a<particles.length;a++){
+        for(let b=a;b<particles.length;b++){
+            let dx = particles[a].x - particles[b].x;
+            let dy = particles[a].y - particles[b].y;
+            let dist = dx*dx + dy*dy;
+
+            if(dist < 10000){
+                ctx.strokeStyle = "rgba(0,198,255,0.08)";
+                ctx.beginPath();
+                ctx.moveTo(particles[a].x,particles[a].y);
+                ctx.lineTo(particles[b].x,particles[b].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+        p.update();
+        p.draw();
+    });
+    connect();
+    requestAnimationFrame(animate);
+}
+
+init();
+animate();
+
+window.addEventListener("resize",()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    init();
+});
+</script>
+
+</body>
+</html>

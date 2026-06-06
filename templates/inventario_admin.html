@@ -1,0 +1,239 @@
+{% extends "layouts/admin_base.html" %}
+{% block content %}
+
+<style>
+
+/* ===== 🌌 FONDO CYBERPUNK ===== */
+body {
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    color: #e2e8f0;
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* ===== TITULO ===== */
+.titulo {
+    margin:20px;
+    padding:15px;
+    text-align:center;
+    font-size:28px;
+    color:#00f7ff;
+    border:1px solid #00f7ff44;
+    border-radius:10px;
+    background: rgba(0,0,0,0.6);
+    box-shadow: 0 0 20px #00f7ff55;
+    text-shadow: 0 0 10px #00f7ff;
+}
+
+/* ===== FILTROS ===== */
+.filtros {
+    margin:10px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.filtros input, .filtros select {
+    background:#020617;
+    border:1px solid #00f7ff44;
+    color:#00f7ff;
+    padding:8px;
+    border-radius:5px;
+    outline:none;
+    transition:0.3s;
+}
+
+.filtros input:focus {
+    box-shadow:0 0 10px #00f7ff;
+}
+
+/* ===== BOTONES ===== */
+.btn {
+    padding:8px 15px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    color:white;
+    font-weight:bold;
+    transition:0.3s;
+    position:relative;
+    overflow:hidden;
+}
+
+.btn:hover {
+    transform:scale(1.05);
+}
+
+.btn-pdf {
+    background:#ff003c;
+    box-shadow:0 0 10px #ff003c;
+}
+
+.btn-excel {
+    background:#00ff9f;
+    box-shadow:0 0 10px #00ff9f;
+}
+
+.btn-buscar {
+    background:#00f7ff;
+    color:black;
+    box-shadow:0 0 10px #00f7ff;
+}
+
+/* ===== TABLA ===== */
+.tabla {
+    margin:10px;
+    width:100%;
+    border-collapse: collapse;
+    background: rgba(0,0,0,0.7);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 0 20px #00f7ff33;
+}
+
+.tabla thead {
+    background:#020617;
+    color:#00f7ff;
+}
+
+.tabla th {
+    padding:12px;
+    text-shadow:0 0 5px #00f7ff;
+}
+
+.tabla td {
+    padding:10px;
+    text-align:center;
+    border-bottom:1px solid #00f7ff22;
+}
+
+.tabla tr:hover {
+    background:#00f7ff11;
+}
+
+/* ===== BOTON ELIMINAR ===== */
+.btn-delete {
+    background:#ff003c;
+    padding:5px 10px;
+    border-radius:5px;
+    box-shadow:0 0 8px #ff003c;
+    text-decoration:none;
+}
+
+/* ===== PAGINACION ===== */
+.paginacion {
+    margin:20px;
+    text-align:center;
+}
+
+.paginacion a {
+    color:#00f7ff;
+    margin:0 5px;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.paginacion a:hover {
+    text-shadow:0 0 10px #00f7ff;
+}
+
+</style>
+
+<h1 class="titulo">⚡ INVENTARIO GAMEDEX ⚡</h1>
+
+<!-- 🔍 FILTROS -->
+<form method="GET" class="filtros">
+
+    <input type="text" name="q" placeholder="🔎 Buscar producto..."
+           value="{{ query }}">
+
+    <select name="filtro">
+        <option value="">Todos</option>
+        <option value="stock_bajo" {% if filtro == "stock_bajo" %}selected{% endif %}>⚠️ Stock bajo</option>
+        <option value="sin_stock" {% if filtro == "sin_stock" %}selected{% endif %}>❌ Sin stock</option>
+    </select>
+
+    <button type="submit" class="btn btn-buscar">Buscar</button>
+
+</form>
+
+<!-- 📥 EXPORTACIONES -->
+<div class="filtros">
+
+    <a href="{% url 'exportar_pdf_inventario' %}" class="btn btn-pdf">
+        📄 Exportar PDF
+    </a>
+
+    <a href="{% url 'exportar_excel_inventario' %}" class="btn btn-excel">
+        📊 Exportar Excel
+    </a>
+
+</div>
+
+<!-- 📊 TABLA -->
+<table class="tabla">
+
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Vendedor</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for producto in productos %}
+        <tr>
+            <td>{{ producto.id }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.descripcion }}</td>
+            <td>${{ producto.precio }}</td>
+
+            <td>
+                {% if producto.cantidad == 0 %}
+                    <span style="color:#ff003c;">❌ Sin stock</span>
+                {% elif producto.cantidad < 5 %}
+                    <span style="color:#ffaa00;">⚠️ Bajo</span>
+                {% else %}
+                    <span style="color:#00ff9f;">✔️ OK</span>
+                {% endif %}
+            </td>
+
+            <td>{{ producto.vendedor.username }}</td>
+
+            <td>
+                <a href="{% url 'eliminar_producto_admin' producto.id %}"
+                   onclick="return confirm('¿Eliminar producto?');"
+                   class="btn-delete">
+                   Eliminar
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+</table>
+
+<!-- 📄 PAGINACIÓN -->
+<div class="paginacion">
+
+    {% if productos.has_previous %}
+        <a href="?page=1&q={{ query }}&filtro={{ filtro }}">⏮</a>
+        <a href="?page={{ productos.previous_page_number }}&q={{ query }}&filtro={{ filtro }}">◀</a>
+    {% endif %}
+
+    <span>
+        Página {{ productos.number }} / {{ productos.paginator.num_pages }}
+    </span>
+
+    {% if productos.has_next %}
+        <a href="?page={{ productos.next_page_number }}&q={{ query }}&filtro={{ filtro }}">▶</a>
+        <a href="?page={{ productos.paginator.num_pages }}&q={{ query }}&filtro={{ filtro }}">⏭</a>
+    {% endif %}
+
+</div>
+
+{% endblock %}

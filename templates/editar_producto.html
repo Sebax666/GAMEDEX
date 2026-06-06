@@ -1,0 +1,224 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Editar Producto</title>
+
+<style>
+
+/* ===== GLOBAL ===== */
+body{
+    margin:0;
+    font-family:'Inter', sans-serif;
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    color:#e2e8f0;
+}
+
+/* ===== NAVBAR ===== */
+.navbar{
+    background: rgba(2,6,23,0.9);
+    backdrop-filter: blur(10px);
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #1e293b;
+}
+
+.navbar h2{
+    color:#38bdf8;
+}
+
+.navbar a{
+    color:#94a3b8;
+    margin-left:15px;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.navbar a:hover{
+    color:#38bdf8;
+}
+
+/* ===== CONTENEDOR ===== */
+.container{
+    width:600px;
+    margin:60px auto;
+    background: linear-gradient(145deg, #020617, #0f172a);
+    padding:30px;
+    border-radius:15px;
+    border:1px solid #1e293b;
+    box-shadow:0 0 30px rgba(56,189,248,0.1);
+    animation:fadeIn 0.6s ease;
+}
+
+/* ===== TITULO ===== */
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+/* ===== INPUTS ===== */
+label{
+    font-size:14px;
+    color:#94a3b8;
+}
+
+input, textarea{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    margin-bottom:15px;
+    border-radius:8px;
+    border:1px solid #1e293b;
+    background:#020617;
+    color:white;
+    transition:0.3s;
+}
+
+input:focus, textarea:focus{
+    outline:none;
+    border-color:#38bdf8;
+    box-shadow:0 0 10px #38bdf8;
+}
+
+/* ===== BOTONES ===== */
+.btn{
+    padding:12px 20px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn-guardar{
+    background:#22c55e;
+    color:white;
+}
+
+.btn-cancelar{
+    background:#ef4444;
+    color:white;
+    text-decoration:none;
+    margin-left:10px;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+    opacity:0.9;
+}
+
+/* ===== PREVIEW IMAGEN ===== */
+.preview{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.preview img{
+    max-width:150px;
+    border-radius:10px;
+    border:2px solid #38bdf8;
+    box-shadow:0 0 15px rgba(56,189,248,0.4);
+}
+
+/* ===== ANIMACION ===== */
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1;}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+
+    <h2>🎮 GAMEDEX</h2>
+
+    <div>
+        {{ request.user.username }}
+        <a href="{% url 'dashboard_vendedor' %}">Inventario</a>
+        <a href="{% url 'logout' %}">Salir</a>
+    </div>
+
+</div>
+
+<!-- FORM -->
+<div class="container">
+
+<h2>Editar Producto</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<!-- 🖼 PREVIEW -->
+<div class="preview">
+    {% if producto.imagen %}
+        <img src="{{ producto.imagen.url }}" id="previewImg">
+    {% endif %}
+</div>
+
+<label>Nombre</label>
+<input type="text" name="nombre" value="{{ producto.nombre }}">
+
+<label>Descripción</label>
+<textarea name="descripcion">{{ producto.descripcion }}</textarea>
+
+<label>Precio</label>
+<input type="number" name="precio" value="{{ producto.precio }}">
+
+<label>Cantidad</label>
+<input type="number" name="cantidad" value="{{ producto.cantidad }}">
+
+<label>Días de garantía</label>
+<input type="number" name="dias_garantia" value="{{ producto.dias_garantia }}">
+
+<label>Imagen</label>
+<input type="file" name="imagen" id="imagenInput">
+
+<br>
+
+<button class="btn btn-guardar">💾 Guardar</button>
+
+<a href="{% url 'dashboard_vendedor' %}" class="btn btn-cancelar">
+Cancelar
+</a>
+
+</form>
+
+</div>
+
+<script>
+
+/* 🔥 PREVIEW IMAGEN EN TIEMPO REAL */
+const input = document.getElementById("imagenInput");
+
+input.addEventListener("change", function(e){
+    const file = e.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = function(event){
+            let img = document.getElementById("previewImg");
+
+            if(!img){
+                img = document.createElement("img");
+                img.id = "previewImg";
+                document.querySelector(".preview").appendChild(img);
+            }
+
+            img.src = event.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+</script>
+
+</body>
+</html>

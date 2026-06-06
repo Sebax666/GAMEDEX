@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+
+<span id="contador-carrito">0</span>
+
+<div class="auth-container">
+    {% block content %}
+    {% endblock %}
+</div>
+
+    ...
+    
+    <script>
+    function agregarCarrito(productoId) {
+        fetch(`/agregar_carrito/${productoId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("contador-carrito").innerText = data.total_items;
+            }
+        });
+    }
+    </script>
+
+</body>
+</html>
+
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>GAMEDEX | Tienda</title>
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    display:flex;
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    color:white;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    width:220px;
+    background: linear-gradient(180deg, #0f172a, #020617);
+    height:100vh;
+    padding:25px;
+    position:fixed;
+    border-right:1px solid rgba(0,255,255,0.2);
+}
+
+.sidebar h2{
+    color:#00f7ff;
+    text-shadow:0 0 10px #00f7ff;
+}
+
+.sidebar a{
+    display:block;
+    color:#cbd5e1;
+    text-decoration:none;
+    margin:20px 0;
+    transition:0.3s;
+}
+
+.sidebar a:hover{
+    color:#00f7ff;
+    transform:translateX(5px);
+}
+
+/* badge carrito */
+
+.badge{
+    background:#ff004c;
+    padding:4px 9px;
+    border-radius:50%;
+    font-size:12px;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:240px;
+    width:100%;
+}
+
+/* ================= TOPBAR ================= */
+
+.topbar{
+    background: rgba(15,23,42,0.8);
+    backdrop-filter: blur(10px);
+    padding:15px 30px;
+    border-bottom:1px solid rgba(0,255,255,0.2);
+}
+
+.topbar h3{
+    color:#00f7ff;
+}
+
+/* ================= MENSAJES ================= */
+
+.contenedor-mensajes{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+.mensaje-alerta{
+    background: linear-gradient(45deg, #1e293b, #0f172a);
+    border-left:4px solid #00f7ff;
+    padding:12px 20px;
+    margin-bottom:10px;
+    border-radius:8px;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn{
+    from{ transform: translateX(200px); opacity:0; }
+    to{ transform: translateX(0); opacity:1; }
+}
+
+/* ================= TITULO ================= */
+
+.titulo{
+    padding:30px;
+    font-size:28px;
+    font-weight:bold;
+    text-shadow:0 0 10px #00f7ff;
+}
+
+/* ================= GRID ================= */
+
+.grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    gap:25px;
+    padding:20px;
+}
+
+/* ================= CARD ================= */
+
+.card{
+    background: linear-gradient(145deg, #020617, #0f172a);
+    border-radius:15px;
+    overflow:hidden;
+    transition:0.3s;
+    border:1px solid rgba(0,255,255,0.1);
+}
+
+.card:hover{
+    transform: translateY(-8px) scale(1.02);
+    box-shadow:0 0 20px rgba(0,255,255,0.4);
+}
+
+/* imagen */
+
+.card img{
+    width:100%;
+    height:200px;
+    object-fit:cover;
+}
+
+/* body */
+
+.card-body{
+    padding:15px;
+}
+
+.card-body h3{
+    color:#00f7ff;
+}
+
+.card-body p{
+    color:#cbd5e1;
+    font-size:14px;
+}
+
+/* precio */
+
+.precio{
+    font-size:18px;
+    color:#22c55e;
+    font-weight:bold;
+}
+
+/* input cantidad */
+
+input[type="number"]{
+    width:60px;
+    padding:5px;
+    border-radius:5px;
+    border:none;
+    margin-top:10px;
+}
+
+/* boton gamer */
+
+.btn{
+    display:block;
+    margin-top:10px;
+    background: linear-gradient(45deg, #00f7ff, #007cf0);
+    color:white;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 10px #00f7ff;
+}
+
+/* stock */
+
+.stock{
+    font-size:12px;
+    color:#94a3b8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>🎮 GAMEDEX</h2>
+
+<a href="{% url 'ver_carrito' %}">
+🛒 Carrito <span class="badge">{{ total_carrito }}</span>
+</a>
+
+<a href="{% url 'editar_perfil' %}">👤 Perfil</a>
+
+<a href="{% url 'comunidades' %}">🌎 Comunidades</a>
+
+<a href="/logout/">🚪 Salir</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+<h3>Bienvenido, {{ request.user.username }}</h3>
+</div>
+
+<!-- MENSAJES -->
+
+<div class="contenedor-mensajes">
+{% if messages %}
+    {% for message in messages %}
+        <div class="mensaje-alerta">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+</div>
+
+<!-- TITULO -->
+
+<div class="titulo">
+🔥 Productos disponibles
+</div>
+
+<!-- GRID -->
+
+<div class="grid">
+
+{% for producto in productos %}
+
+<div class="card">
+
+{% if producto.imagen %}
+<img src="{{ producto.imagen.url }}">
+{% endif %}
+
+<div class="card-body">
+
+<h3>{{ producto.nombre }}</h3>
+
+<p>{{ producto.descripcion|truncatechars:80 }}</p>
+
+<p class="precio">$ {{ producto.precio }}</p>
+
+<p class="stock">Stock: {{ producto.cantidad }}</p>
+
+<form action="{% url 'agregar_carrito' producto.id %}" method="POST">
+{% csrf_token %}
+
+<input type="number" name="cantidad" value="1" min="1">
+
+<button class="btn">
+🛒 Agregar
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+<script>
+
+// desaparecer mensajes
+setTimeout(()=>{
+    document.querySelectorAll(".mensaje-alerta").forEach(m=>{
+        m.style.opacity="0";
+        setTimeout(()=>m.remove(),1000);
+    });
+},4000);
+
+</script>
+
+</body>
+</html>

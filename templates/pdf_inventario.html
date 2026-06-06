@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #122A54;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .info {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #122A54;
+            color: white;
+            padding: 8px;
+        }
+
+        td {
+            padding: 6px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .totales {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 10px;
+            color: gray;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="title">GAMEDEX</div>
+    <div class="subtitle">Reporte de Inventario</div>
+</div>
+
+<div class="info">
+    <strong>Administrador:</strong> {{ usuario.username }} <br>
+    <strong>Total de productos:</strong> {{ total_productos }} <br>
+    <strong>Total de stock:</strong> {{ total_stock }}
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Vendedor</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for p in productos %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.descripcion }}</td>
+            <td>${{ p.precio }}</td>
+            <td>{{ p.cantidad }}</td>
+            <td>{{ p.vendedor.username }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="totales">
+    <strong>Total productos:</strong> {{ total_productos }} <br>
+    <strong>Total stock:</strong> {{ total_stock }}
+</div>
+
+<div class="footer">
+    GAMEDEX © - Sistema de gestión de inventario
+</div>
+
+</body>
+</html>

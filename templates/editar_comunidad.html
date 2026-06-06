@@ -1,0 +1,113 @@
+{% load static %}
+
+{% block content %}
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.container-edit {
+    max-width: 800px;
+    margin: 50px auto;
+    background: #1e293b;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.container-edit h2 {
+    text-align: center;
+    font-size: 32px;
+    color: #38bdf8;
+    margin-bottom: 25px;
+}
+
+/* Formulario */
+form.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Inputs y textarea */
+form.edit-form input[type="text"],
+form.edit-form textarea,
+form.edit-form input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #0f172a;
+    color: white;
+    font-size: 16px;
+}
+
+form.edit-form textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+/* Botones */
+.btn-gamer {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-save {
+    background: linear-gradient(45deg, #22c55e, #4ade80);
+    color: white;
+}
+
+.btn-save:hover {
+    filter: brightness(1.2);
+}
+
+.btn-cancel {
+    background: linear-gradient(45deg, #ef4444, #f87171);
+    color: white;
+}
+
+.btn-cancel:hover {
+    filter: brightness(1.2);
+}
+
+/* Imagen actual */
+.current-image {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    max-height: 300px;
+    object-fit: cover;
+    border: 2px solid #38bdf8;
+}
+</style>
+
+<div class="container-edit">
+
+    <h2>✏️ Editar comunidad</h2>
+
+    <!-- Imagen actual -->
+    {% if comunidad.imagen %}
+        <img src="{{ comunidad.imagen.url }}" alt="Imagen de la comunidad" class="current-image">
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="edit-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn-gamer btn-save">💾 Guardar cambios</button>
+        <a href="{% url 'ver_comunidad' comunidad.id %}" class="btn-gamer btn-cancel" style="text-align:center; display:block; text-decoration:none;">❌ Cancelar</a>
+    </form>
+</div>
+
+{% endblock %}

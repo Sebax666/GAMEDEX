@@ -1,0 +1,306 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GAMEDEX CYBER LOGIN</title>
+    <meta charset="UTF-8">
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(270deg, #020617, #0f172a, #020617);
+            background-size: 600% 600%;
+            animation: bgMove 10s infinite alternate;
+        }
+
+        @keyframes bgMove {
+            0% {background-position: 0%;}
+            100% {background-position: 100%;}
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .login-box {
+            position: relative;
+            z-index: 2;
+            width: 360px;
+            margin: auto;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 40px;
+            border-radius: 15px;
+            background: rgba(2,6,23,0.9);
+            box-shadow: 0 0 40px #00ffff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .glitch {
+            position: relative;
+            color: #00ffff;
+            font-size: 28px;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: "GAMEDEX LOGIN";
+            position: absolute;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .glitch::before {
+            color: red;
+            animation: glitchTop 1s infinite;
+        }
+
+        .glitch::after {
+            color: blue;
+            animation: glitchBottom 1s infinite;
+        }
+
+        @keyframes glitchTop {
+            0% {clip-path: inset(0 0 80% 0);}
+            50% {clip-path: inset(10% 0 60% 0);}
+            100% {clip-path: inset(0 0 80% 0);}
+        }
+
+        @keyframes glitchBottom {
+            0% {clip-path: inset(80% 0 0 0);}
+            50% {clip-path: inset(60% 0 10% 0);}
+            100% {clip-path: inset(80% 0 0 0);}
+        }
+
+        img {
+            width: 100px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 15px #00ffff);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 10px;
+            top: 12px;
+            color: #00ffff;
+            font-size: 18px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 12px 12px 35px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: none;
+            background: #020617;
+            color: white;
+            border: 1px solid #00ffff50;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #00ffff, #1e90ff);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: scale(1.07);
+            box-shadow: 0 0 25px #00ffff;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 10px;
+            color: #00ffff;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% {opacity: 0.3;}
+        }
+
+        a { color: #00ffff; text-decoration: none; }
+        p { color: #ccc; }
+
+        /* 🔥 POPUP CYBER */
+        .error-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .error-popup.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .error-content {
+            background: rgba(2,6,23,0.95);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 0 25px red;
+            animation: popupAnim 0.4s ease;
+            position: relative;
+        }
+
+        .error-content h3 { color: #ff4d4d; }
+        .error-content p { color: #ccc; }
+
+        .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            cursor: pointer;
+            color: #ff4d4d;
+        }
+
+        @keyframes popupAnim {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="particles-js"></div>
+
+<div class="login-box">
+
+    <a href="{% url 'inicio' %}">
+        <img src="{% static 'imagenes/logo.png' %}">
+    </a>
+
+    <h2 class="glitch">GAMEDEX LOGIN</h2>
+
+    <form method="post" onsubmit="activarLoading()">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <i>👤</i>
+            {{ form.username }}
+        </div>
+
+        <div class="input-group">
+            <i>🔒</i>
+            {{ form.password }}
+        </div>
+
+        <button type="submit">Entrar</button>
+
+        <div class="loading" id="loading">
+            Iniciando sesión...
+        </div>
+
+        <div style="margin-top:15px;">
+            <p>¿No tienes cuenta?</p>
+            <a href="{% url 'registro_publico' %}">Registrarse</a>
+        </div>
+    </form>
+</div>
+
+<!-- 🔥 POPUP -->
+<div id="error-popup" class="error-popup">
+    <div class="error-content">
+        <span class="close-btn" onclick="cerrarPopup()">✖</span>
+        <h3>⚠ ERROR DE ACCESO</h3>
+        <p id="error-text"></p>
+    </div>
+</div>
+
+<script>
+function activarLoading(){
+    document.getElementById("loading").style.display = "block";
+}
+
+function mostrarError(msg){
+    document.getElementById("error-text").innerText = msg;
+    document.getElementById("error-popup").classList.add("active");
+}
+
+function cerrarPopup(){
+    document.getElementById("error-popup").classList.remove("active");
+}
+</script>
+
+{% if form.errors %}
+<script>
+    let errores = "";
+
+    {% for field in form %}
+        {% for error in field.errors %}
+            errores += "• {{ error|escapejs }}\n";
+        {% endfor %}
+    {% endfor %}
+
+    {% for error in form.non_field_errors %}
+        errores += "• {{ error|escapejs }}\n";
+    {% endfor %}
+
+    if (errores !== "") {
+        mostrarError(errores);
+    }
+</script>
+{% endif %}
+
+<script>
+particlesJS("particles-js", {
+    particles: {
+        number: { value: 100 },
+        size: { value: 3 },
+        color: { value: "#00ffff" },
+        line_linked: {
+            enable: true,
+            distance: 130,
+            color: "#00ffff",
+            opacity: 0.4
+        },
+        move: { enable: true, speed: 2 }
+    },
+    interactivity: {
+        events: {
+            onhover: { enable: true, mode: "grab" },
+            onclick: { enable: true, mode: "push" }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

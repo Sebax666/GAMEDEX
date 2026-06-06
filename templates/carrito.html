@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>GAMEDEX | Carrito</title>
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    display:flex;
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    color:white;
+}
+
+
+
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    width:220px;
+    background: linear-gradient(180deg, #0f172a, #020617);
+    height:100vh;
+    padding:25px;
+    position:fixed;
+    border-right:1px solid rgba(0,255,255,0.2);
+}
+
+.sidebar h2{
+    color:#00f7ff;
+    text-shadow:0 0 10px #00f7ff;
+}
+
+.sidebar a{
+    display:block;
+    color:#cbd5e1;
+    text-decoration:none;
+    margin:20px 0;
+    transition:0.3s;
+}
+
+.sidebar a:hover{
+    color:#00f7ff;
+    transform:translateX(5px);
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:240px;
+    width:100%;
+    padding:30px;
+}
+
+/* ================= TITULO ================= */
+
+.titulo{
+    font-size:28px;
+    margin-bottom:25px;
+    text-shadow:0 0 10px #00f7ff;
+}
+
+/* ================= TABLA ================= */
+
+.tabla{
+    width:100%;
+    border-collapse:collapse;
+    background: rgba(15,23,42,0.6);
+    backdrop-filter: blur(10px);
+    border-radius:12px;
+    overflow:hidden;
+}
+
+/* encabezado */
+
+.tabla th{
+    background: rgba(0,255,255,0.1);
+    padding:15px;
+    color:#00f7ff;
+}
+
+/* filas */
+
+.tabla td{
+    padding:15px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+/* hover fila */
+
+.tabla tr:hover{
+    background: rgba(0,255,255,0.05);
+}
+
+/* ================= BOTONES ================= */
+
+.btn{
+    padding:6px 12px;
+    border-radius:6px;
+    text-decoration:none;
+    color:white;
+    transition:0.3s;
+    font-size:13px;
+}
+
+/* quitar */
+
+.btn-quitar{
+    background: linear-gradient(45deg, #f59e0b, #f97316);
+}
+
+.btn-quitar:hover{
+    box-shadow:0 0 10px #f59e0b;
+}
+
+/* eliminar */
+
+.btn-eliminar{
+    background: linear-gradient(45deg, #ef4444, #dc2626);
+}
+
+.btn-eliminar:hover{
+    box-shadow:0 0 10px #ef4444;
+}
+
+/* ================= TOTAL ================= */
+
+.total-box{
+    margin-top:25px;
+    background: rgba(2,6,23,0.8);
+    border:1px solid rgba(0,255,255,0.2);
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.total{
+    font-size:26px;
+    color:#22c55e;
+    margin-top:10px;
+}
+
+/* ================= BOTON COMPRAR ================= */
+
+.btn-comprar{
+    display:inline-block;
+    margin-top:15px;
+    padding:14px 35px;
+    background: linear-gradient(45deg, #00f7ff, #007cf0);
+    color:white;
+    border-radius:10px;
+    text-decoration:none;
+    font-size:18px;
+    transition:0.3s;
+}
+
+.btn-comprar:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 15px #00f7ff;
+}
+
+/* ================= MENSAJES ================= */
+
+.message{
+    margin-top:20px;
+    padding:12px;
+    border-radius:8px;
+    text-align:center;
+    animation:fadeIn 0.5s ease;
+}
+
+.message.success{
+    background:#22c55e;
+}
+
+.message.error{
+    background:#ef4444;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(-10px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>🎮 GAMEDEX</h2>
+
+<a href="{% url 'dashboard_usuario' %}">🏪 Volver a tienda</a>
+<a href="/logout/">🚪 Cerrar sesión</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="titulo">
+🛒 Tu carrito
+</div>
+
+<table class="tabla">
+
+<tr>
+<th>Producto</th>
+<th>Precio</th>
+<th>Cantidad</th>
+<th>Subtotal</th>
+<th>Acciones</th>
+</tr>
+
+{% for item in productos_carrito %}
+
+<tr>
+
+<td>{{ item.producto.nombre }}</td>
+<td>${{ item.producto.precio }}</td>
+<td>{{ item.cantidad }}</td>
+<td>${{ item.subtotal }}</td>
+
+<td>
+
+<a href="{% url 'quitar_unidad' item.producto.id %}" class="btn btn-quitar">
+➖ Quitar
+</a>
+
+<a href="{% url 'eliminar_producto' item.producto.id %}" class="btn btn-eliminar">
+❌ Eliminar
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<!-- TOTAL -->
+
+<div class="total-box">
+
+<p>💳 Finalizar compra</p>
+
+<div class="total">
+Total: ${{ total }}
+</div>
+
+<a href="{% url 'comprar_carrito' %}" class="btn-comprar">
+
+
+🚀 Comprar ahora
+</a>
+
+</div>
+
+<!-- MENSAJES -->
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+</div>
+
+<script>
+
+// auto desaparecer mensajes
+setTimeout(()=>{
+    document.querySelectorAll(".message").forEach(m=>{
+        m.style.opacity="0";
+        setTimeout(()=>m.remove(),1000);
+    });
+},4000);
+
+</script>
+
+</body>
+</html>

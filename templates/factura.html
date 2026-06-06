@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>GAMEDEX | Factura</title>
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    padding:40px;
+    color:white;
+}
+
+/* ================= CONTENEDOR ================= */
+
+.factura{
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    padding:40px;
+    border-radius:15px;
+    max-width:950px;
+    margin:auto;
+    border:1px solid rgba(0,255,255,0.2);
+    box-shadow:0 0 30px rgba(0,255,255,0.1);
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    padding-bottom:15px;
+}
+
+.titulo{
+    font-size:28px;
+    font-weight:bold;
+    color:#00f7ff;
+    text-shadow:0 0 10px #00f7ff;
+}
+
+.cliente{
+    font-size:14px;
+    color:#cbd5e1;
+}
+
+/* ================= TABLA ================= */
+
+.tabla{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.tabla th{
+    background: rgba(0,255,255,0.1);
+    color:#00f7ff;
+    padding:12px;
+}
+
+.tabla td{
+    padding:12px;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+    color:#e2e8f0;
+}
+
+.tabla tr:hover{
+    background: rgba(0,255,255,0.05);
+}
+
+/* ================= TOTAL ================= */
+
+.total-box{
+    margin-top:30px;
+    text-align:right;
+}
+
+.total{
+    font-size:26px;
+    color:#22c55e;
+    font-weight:bold;
+}
+
+/* ================= BOTONES ================= */
+
+.botones{
+    margin-top:40px;
+    text-align:center;
+}
+
+.btn{
+    padding:14px 30px;
+    border-radius:10px;
+    text-decoration:none;
+    color:white;
+    margin:10px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+/* descargar */
+
+.btn-descargar{
+    background: linear-gradient(45deg, #22c55e, #16a34a);
+}
+
+.btn-descargar:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 15px #22c55e;
+}
+
+/* volver */
+
+.btn-volver{
+    background: linear-gradient(45deg, #00f7ff, #007cf0);
+}
+
+.btn-volver:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 15px #00f7ff;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    margin-top:30px;
+    font-size:12px;
+    text-align:center;
+    color:#94a3b8;
+    border-top:1px solid rgba(255,255,255,0.1);
+    padding-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="factura">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="titulo">🧾 GAMEDEX Invoice</div>
+
+        <div class="cliente">
+            <b>Cliente:</b> {{ usuario.username }} <br>
+            <b>Fecha:</b> {% now "d/m/Y H:i" %}
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <table class="tabla">
+
+        <tr>
+            <th>Producto</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+        </tr>
+
+        {% for item in productos %}
+        <tr>
+            <td><b>{{ item.nombre }}</b></td>
+            <td>{{ item.descripcion|truncatechars:60 }}</td>
+            <td>${{ item.precio }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>${{ item.subtotal }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <!-- TOTAL -->
+    <div class="total-box">
+        <div class="total">
+            Total: ${{ total }}
+        </div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="botones">
+
+        <a href="{% url 'descargar_factura_pdf' %}" class="btn btn-descargar">
+            📄 Descargar PDF
+        </a>
+
+        <a href="{% url 'dashboard_usuario' %}" class="btn btn-volver">
+            🏠 Volver a tienda
+        </a>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        Gracias por tu compra en GAMEDEX 🎮 | Plataforma gamer de confianza
+    </div>
+
+</div>
+
+</body>
+
+</html>
