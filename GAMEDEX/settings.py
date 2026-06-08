@@ -166,3 +166,26 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+DEBUG = False
+
+ALLOWED_HOSTS = ['*']  # luego lo cambias por dominio
+
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(default='')
+}
+
+import os
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # resto normal
+]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
