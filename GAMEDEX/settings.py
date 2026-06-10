@@ -174,14 +174,9 @@ ALLOWED_HOSTS = ['*']  # luego lo cambias por dominio
 import dj_database_url
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mi_proyecto',
-        'USER': 'django_user',
-        'PASSWORD': '123456789',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 import os
