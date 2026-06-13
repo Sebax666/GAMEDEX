@@ -167,7 +167,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']  # luego lo cambias por dominio
 
