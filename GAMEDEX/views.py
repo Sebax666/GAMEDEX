@@ -970,17 +970,23 @@ def exportar_excel_vendedor(request):
 def crear_producto(request):
 
     if request.method == "POST":
+
         nombre = request.POST.get("nombre")
         descripcion = request.POST.get("descripcion")
         precio = request.POST.get("precio")
         cantidad = request.POST.get("cantidad")
+        dias_garantia = request.POST.get("dias_garantia")
         imagen = request.FILES.get("imagen")
+
+        if precio:
+            precio = precio.replace(".", "")
 
         Producto.objects.create(
             nombre=nombre,
             descripcion=descripcion,
             precio=precio,
             cantidad=cantidad,
+            dias_garantia=dias_garantia,
             imagen=imagen,
             vendedor=request.user
         )
@@ -989,8 +995,6 @@ def crear_producto(request):
         return redirect("dashboard_vendedor")
 
     return render(request, "crear_producto.html")
-
-from django.shortcuts import get_object_or_404, redirect
 
 # =====================================
 # destacar producto (Vendedor)

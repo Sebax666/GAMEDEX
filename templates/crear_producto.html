@@ -73,16 +73,14 @@ body {
     background: rgba(0,0,0,0.7);
     color: white;
     outline: none;
-    transition: 0.3s;
 }
 
-.group input:focus,
-.group textarea:focus {
-    border-color: #00c6ff;
-    box-shadow: 0 0 12px #00c6ff;
+/* FLOAT LABEL */
+.group input::placeholder,
+.group textarea::placeholder {
+    color: transparent;
 }
 
-/* LABEL FLOAT */
 .group label {
     position: absolute;
     top: 12px;
@@ -93,9 +91,9 @@ body {
 }
 
 .group input:focus + label,
-.group input:valid + label,
+.group input:not(:placeholder-shown) + label,
 .group textarea:focus + label,
-.group textarea:valid + label {
+.group textarea:not(:placeholder-shown) + label {
     top: -8px;
     left: 10px;
     font-size: 10px;
@@ -161,11 +159,6 @@ body {
     background: red;
     color: white;
 }
-
-.error {
-    color: red;
-    font-size: 12px;
-}
 </style>
 
 </head>
@@ -176,46 +169,44 @@ body {
 
 <div class="container">
 <form method="POST" enctype="multipart/form-data" class="card">
-{% csrf_token %}
+    {% csrf_token %}
 
-<h2>🎮 Crear Producto PRO</h2>
+<h2>🎮 Crear Producto</h2>
 
 <div class="group">
-    <input type="text" name="nombre" required>
-    <label>Nombre</label>
+    <input type="text" id="nombre" name="nombre" placeholder=" " required>
+    <label for="nombre">Nombre</label>
 </div>
 
 <div class="group">
-    <input type="text" id="precio" required>
-    <label>Precio</label>
+    <input type="text" id="precio" name="precio" placeholder=" " required>
+    <label for="precio">Precio</label>
 </div>
 
 <div class="group">
-    <input type="number" name="cantidad" required>
-    <label>Cantidad</label>
+    <input type="number" id="cantidad" name="cantidad" min="1" placeholder=" " required>
+    <label for="cantidad">Cantidad</label>
 </div>
 
 <div class="group">
-    <input type="number" name="dias_garantia" required>
-    <label>Garantía (días)</label>
+    <input type="number" id="garantia" name="dias_garantia" min="0" placeholder=" " required>
+    <label for="garantia">Garantía (días)</label>
 </div>
 
 <div class="group">
-    <textarea name="descripcion" rows="3" required></textarea>
-    <label>Descripción</label>
+    <textarea id="descripcion" name="descripcion" rows="4" placeholder=" " required></textarea>
+    <label for="descripcion">Descripción</label>
 </div>
-
-<!-- DRAG DROP -->
 
 <div class="drop-zone" id="dropZone">
-    <p>🖼️ Arrastra tu imagen o haz click</p>
-    <input type="file" name="imagen" id="fileInput" hidden>
+    <p>🖼️ Arrastra una imagen o haz clic aquí</p>
+    <input type="file" name="imagen" id="fileInput" accept="image/*" hidden>
 </div>
 
 <div class="preview" id="preview"></div>
 
 <div class="buttons">
-    <button type="submit" class="btn">Crear</button>
+    <button type="submit" class="btn">Crear Producto</button>
     <a href="{% url 'dashboard_vendedor' %}" class="btn btn-cancel">Cancelar</a>
 </div>
 
@@ -229,7 +220,7 @@ const preview = document.getElementById('preview');
 
 dropZone.onclick = () => fileInput.click();
 
-fileInput.addEventListener('change', () => showPreview(fileInput.files[0]));
+fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
 
 dropZone.addEventListener('dragover', e => {
     e.preventDefault();
@@ -242,16 +233,21 @@ dropZone.addEventListener('dragleave', () => {
 
 dropZone.addEventListener('drop', e => {
     e.preventDefault();
-    fileInput.files = e.dataTransfer.files;
-    showPreview(e.dataTransfer.files[0]);
     dropZone.classList.remove('dragover');
+
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        fileInput.files = e.dataTransfer.files;
+        handleFile(file);
+    }
 });
 
-function showPreview(file){
+function handleFile(file){
     preview.innerHTML = "";
     if(file){
         const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
+        const url = URL.createObjectURL(file);
+        img.src = url;
         preview.appendChild(img);
     }
 }
@@ -259,10 +255,9 @@ function showPreview(file){
 /* FORMATO PRECIO */
 const precioInput = document.getElementById('precio');
 
-precioInput.addEventListener('input', () => {
-    let value = precioInput.value.replace(/\D/g, '');
-    value = new Intl.NumberFormat().format(value);
-    precioInput.value = value;
+precioInput.addEventListener('input', function() {
+    let valor = this.value.replace(/\D/g, '');
+    this.value = valor ? new Intl.NumberFormat('es-CO').format(valor) : '';
 });
 </script>
 
