@@ -179,7 +179,7 @@ DATABASES = {
         'NAME': 'mi_proyecto',
         'USER': 'django_user',
         'PASSWORD': '123456789',
-        'HOST': 'localhost',
+        'HOST': 'postgresql://gamedex_db_user:iH2RASXgXmRfDhRZpiiizFyuJQZ2s5lp@dpg-d8kv1u7lk1mc73ccl2fg-a.oregon-postgres.render.com/gamedex_db',
         'PORT': '5432',
     }
 }
