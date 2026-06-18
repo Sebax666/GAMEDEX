@@ -1,79 +1,54 @@
 [
-{
-"model": "auth.group",
-"pk": 1,
-"fields": { "name": "Administrador" }
-},
-{
-"model": "auth.group",
-"pk": 2,
-"fields": { "name": "Vendedor" }
-},
-{
-"model": "auth.group",
-"pk": 3,
-"fields": { "name": "Usuario" }
-},
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": { "name": "Administrador" }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": { "name": "Vendedor" }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": { "name": "Usuario" }
+  },
 
-{
-"model": "auth.user",
-"pk": 1,
-"fields": {
-"username": "admin",
-"password": "pbkdf2_sha256$260000$hash",
-"is_superuser": true,
-"is_staff": true,
-"is_active": true,
-"groups": [[ "Administrador" ]]
-}
-},
-{
-"model": "auth.user",
-"pk": 2,
-"fields": {
-"username": "vendedor111",
-"password": "pbkdf2_sha256$260000$hash",
-"is_superuser": false,
-"is_staff": false,
-"is_active": true,
-"groups": [[ "Vendedor" ]]
-}
-},
-{
-"model": "auth.user",
-"pk": 3,
-"fields": {
-"username": "usuario1",
-"password": "pbkdf2_sha256$260000$hash",
-"is_superuser": false,
-"is_staff": false,
-"is_active": true,
-"groups": [[ "Usuario" ]]
-}
-},
-
-{
-"model": "GAMEDEX.perfil",
-"pk": 1,
-"fields": {
-"user": 1,
-"rol": "Administrador"
-}
-},
-{
-"model": "GAMEDEX.perfil",
-"pk": 2,
-"fields": {
-"user": 2,
-"rol": "Vendedor"
-}
-},
-{
-"model": "GAMEDEX.perfil",
-"pk": 3,
-"fields": {
-"user": 3,
-"rol": "Usuario"
-}
-}
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "admin",
+      "password": "pbkdf2_sha256$260000$hash",
+      "is_superuser": true,
+      "is_staff": true,
+      "is_active": true,
+      "groups": [1]
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "username": "vendedor111",
+      "password": "pbkdf2_sha256$260000$hash",
+      "is_superuser": false,
+      "is_staff": false,
+      "is_active": true,
+      "groups": [2]
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "username": "usuario1",
+      "password": "pbkdf2_sha256$260000$hash",
+      "is_superuser": false,
+      "is_staff": false,
+      "is_active": true,
+      "groups": [3]
+    }
+  }
 ]
