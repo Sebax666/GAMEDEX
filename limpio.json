@@ -31,7 +31,7 @@
 "model": "auth.user",
 "pk": 2,
 "fields": {
-"username": "vendedor1",
+"username": "vendedor111",
 "password": "pbkdf2_sha256$260000$hash",
 "is_superuser": false,
 "is_staff": false,
