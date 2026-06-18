@@ -53,15 +53,16 @@
 },
 
 {
-"model": "gamedex.perfil",
+"model": "GAMEDEX.perfil",
 "pk": 1,
 "fields": {
 "user": 1,
 "rol": "Administrador"
 }
+}
 },
 {
-"model": "gamedex.perfil",
+"model": "GAMEDEX.perfil",
 "pk": 2,
 "fields": {
 "user": 2,
@@ -69,7 +70,7 @@
 }
 },
 {
-"model": "gamedex.perfil",
+"model": "GAMEDEX.perfil",
 "pk": 3,
 "fields": {
 "user": 3,
