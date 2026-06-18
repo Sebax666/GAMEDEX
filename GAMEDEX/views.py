@@ -38,16 +38,7 @@ def inicio(request):
     return render(request, 'inicio.html', {'productos': productos})
 
 
-def redireccion_dashboard(request):
-    if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
-            return redirect('admin_dashboard')
-        elif request.user.groups.filter(name='Vendedor').exists():
-            return redirect('vendedor_dashboard')
-        else:
-            return redirect('usuario_dashboard')
-    
-    return redirect('login')
+
 # =====================================
 # REGISTRO
 # =====================================
@@ -170,71 +161,58 @@ def eliminar_producto(request, producto_id):
 # =====================================
 
 def comprar_carrito(request):
-
     carrito = request.session.get("carrito", {})
+
 
     if not carrito:
         messages.error(request, "El carrito está vacío.")
-        return redirect("dashboard_usuario")
+    return redirect("dashboard_usuario")
 
     productos_factura = []
     total = 0
 
     for producto_id, item in carrito.items():
-
         producto = get_object_or_404(Producto, id=producto_id)
 
-        cantidad = item.get("cantidad", 0)
-        precio = float(item.get("precio", 0))
+    cantidad = item.get("cantidad", 0)
+    precio = float(item.get("precio", 0))
 
-        if cantidad > producto.cantidad:
-            messages.error(request, f"No hay suficiente stock de {producto.nombre}")
-            return redirect("ver_carrito")
+    # Validar stock
+    if cantidad > producto.cantidad:
+        messages.error(request, f"No hay suficiente stock de {producto.nombre}")
+        return redirect("ver_carrito")
 
-        subtotal = precio * cantidad
+    subtotal = precio * cantidad
 
-        producto.cantidad -= cantidad
-        producto.save()
+    # Descontar stock
+    producto.cantidad -= cantidad
+    producto.save()
 
-        productos_factura.append({
-            "nombre": producto.nombre,
-            "descripcion": producto.descripcion,
-            "precio": precio,
-            "cantidad": cantidad,
-            "subtotal": subtotal,
+    productos_factura.append({
+        "nombre": producto.nombre,
+        "descripcion": producto.descripcion,
+        "precio": precio,
+        "cantidad": cantidad,
+        "subtotal": subtotal,
+    })
 
-        })
+    total += subtotal
 
-        total += subtotal
-
+# Guardar factura en sesión
     request.session["factura"] = {
         "productos": productos_factura,
         "total": total
-    }
+}
 
+# Vaciar carrito
     request.session["carrito"] = {}
 
+# Forzar guardado de sesión
     request.session.modified = True
-    request.session.save()
 
-    return redirect("/factura/")
+    return redirect("factura")
 
-    # =====================================
-    # 🔥 GUARDAR FACTURA (FORMA SEGURA)
-    # =====================================
-    request.session["factura"] = {
-        "productos": productos_factura,
-        "total": total
-    }
 
-    # limpiar carrito
-    request.session["carrito"] = {}
-
-    # 🔥 FORZAR GUARDADO REAL EN SESIÓN
-    request.session.modified = True
-    request.session.save()
-
-    return redirect("factura")  
 
 # =====================================
 # FACTURA
@@ -1073,7 +1051,6 @@ def toggle_publicacion(request, producto_id):
 # =====================================
 @login_required
 def redireccion_dashboard(request):
-
     if request.user.groups.filter(name="Administrador").exists():
         return redirect("dashboard_admin")
     elif request.user.groups.filter(name="Vendedor").exists():

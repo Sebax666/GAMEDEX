@@ -118,8 +118,6 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# -------------------------------------------------
-# SUPERUSER AUTO CREATE
-# -------------------------------------------------
-from django.contrib.auth import get_user_model
+
+
 
