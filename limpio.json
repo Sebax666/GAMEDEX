@@ -59,7 +59,6 @@
 "user": 1,
 "rol": "Administrador"
 }
-}
 },
 {
 "model": "GAMEDEX.perfil",
