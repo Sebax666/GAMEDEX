@@ -166,7 +166,7 @@ def comprar_carrito(request):
 
     if not carrito:
         messages.error(request, "El carrito está vacío.")
-    return redirect("dashboard_usuario")
+        return redirect("dashboard_usuario")
 
     productos_factura = []
     total = 0
@@ -174,40 +174,40 @@ def comprar_carrito(request):
     for producto_id, item in carrito.items():
         producto = get_object_or_404(Producto, id=producto_id)
 
-    cantidad = item.get("cantidad", 0)
-    precio = float(item.get("precio", 0))
+        cantidad = item.get("cantidad", 0)
+        precio = float(item.get("precio", 0))
 
-    # Validar stock
-    if cantidad > producto.cantidad:
-        messages.error(request, f"No hay suficiente stock de {producto.nombre}")
-        return redirect("ver_carrito")
+        # Validar stock
+        if cantidad > producto.cantidad:
+            messages.error(request, f"No hay suficiente stock de {producto.nombre}")
+            return redirect("ver_carrito")
 
-    subtotal = precio * cantidad
+        subtotal = precio * cantidad
 
-    # Descontar stock
-    producto.cantidad -= cantidad
-    producto.save()
+        # Descontar stock
+        producto.cantidad -= cantidad
+        producto.save()
 
-    productos_factura.append({
-        "nombre": producto.nombre,
-        "descripcion": producto.descripcion,
-        "precio": precio,
-        "cantidad": cantidad,
-        "subtotal": subtotal,
-    })
+        productos_factura.append({
+            "nombre": producto.nombre,
+            "descripcion": producto.descripcion,
+            "precio": precio,
+            "cantidad": cantidad,
+            "subtotal": subtotal,
+        })
 
-    total += subtotal
+        total += subtotal
 
-# Guardar factura en sesión
+    # Guardar factura en sesión
     request.session["factura"] = {
         "productos": productos_factura,
         "total": total
-}
+    }
 
-# Vaciar carrito
+    # Vaciar carrito
     request.session["carrito"] = {}
 
-# Forzar guardado de sesión
+    # Forzar guardado de sesión
     request.session.modified = True
 
     return redirect("factura")
@@ -255,37 +255,6 @@ def descargar_factura_pdf(request):
         return HttpResponse("Error al generar PDF")
 
     return response
-
-# =====================================
-# PERFIL
-# =====================================
-def editar_perfil(request):
-
-    user = request.user
-    perfil = user.perfil
-
-    if request.method == 'POST':
-        user.username = request.POST.get('username')
-        user.email = request.POST.get('email')
-
-        perfil.telefono = request.POST.get('telefono')
-        perfil.direccion = request.POST.get('direccion')
-
-        user.save()
-        perfil.save()
-
-        messages.success(request, "Perfil actualizado correctamente")
-
-        # 🔥 REDIRECCIÓN INTELIGENTE
-        if perfil.rol == "Vendedor":
-            return redirect('dashboard_vendedor')
-        else:
-            return redirect('dashboard_usuario')
-
-    return render(request, 'editar_perfil.html', {
-        'user': user,
-        'perfil': perfil
-    })
 
 # =====================================
 # DASHBOARD ADMIN
@@ -409,7 +378,7 @@ def crear_publicacion(request, id) -> JsonResponse:
                 "autor": publicacion.autor.username,
                 "contenido": publicacion.contenido,
                 "imagen_url": publicacion.imagen.url if publicacion.imagen else "",
-                "fecha": publicacion.created_at.strftime("%Y-%m-%d %H:%M"),
+                "fecha": publicacion.creado.strftime("%Y-%m-%d %H:%M"),
             }
             return JsonResponse(data)
         

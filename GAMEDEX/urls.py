@@ -62,7 +62,6 @@ urlpatterns = [
 
     #editar perfil
     path('editar-perfil/', views.editar_perfil, name='editar_perfil'),
-    path('editar-perfil/', views.editar_perfil, name='editar_perfil'),
 
 
     path("exportar-pdf/", views.exportar_pdf_vendedor, name="exportar_pdf_vendedor"),
@@ -95,3 +94,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')
